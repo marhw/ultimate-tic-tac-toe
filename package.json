@@ -9,7 +9,7 @@
     "lint-staged": "^15.2.10"
   },
   "lint-staged": {
-    "frontend/src/**/*.{js,vue}": "eslint",
+    "frontend/src/**/*.{js,vue,ts}": "eslint",
     "backend-symfony/src/**/*.php": [
       "vendor/bin/phpcs --standard=PSR12",
       "vendor/bin/phpstan analyse"
