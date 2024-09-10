@@ -1,0 +1,16 @@
+# Ignore node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore local environment files
+.env
+.DS_Store
+
+# Ignore Vite build outputs
+dist
+out
+build
+
+# Ignore git-related files
+.git
+.gitignore

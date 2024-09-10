@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend-vue
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend-vue:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run dev
+    networks:
+      - docker-net
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend-symfony
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend-symfony:/app
+    environment:
+      - APP_ENV=dev
+    working_dir: /app
+    depends_on:
+      - mongo
+    networks:
+      - docker-net
+
+  mongo:
+    image: mongo:5.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_volume:/data/db
+    networks:
+      - docker-net
+
+volumes:
+  mongo_volume:
+
+networks:
+  docker-net:
+    driver: bridge
