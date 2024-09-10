@@ -3,7 +3,7 @@
 </script>
 
 <template>
- APP
+ APP - test pre commit with husky
 </template>
 
 <style scoped>
