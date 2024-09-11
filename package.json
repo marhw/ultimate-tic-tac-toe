@@ -15,9 +15,9 @@
       "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js"
     ],
     "./backend-symfony/src/**/*.php": [
-      "vendor/bin/phpcs --standard=PSR12",
-      "vendor/bin/phpstan analyse",
-      "vendor/bin/psalm"
+      "./backend-symfony/vendor/bin/phpcbf --standard=PSR12",
+      "./backend-symfony/vendor/bin/phpstan analyse",
+      "./backend-symfony/vendor/bin/psalm --config=./backend-symfony/psalm.xml"
     ]
   }
 }
