@@ -9,8 +9,12 @@
     "lint-staged": "^15.2.10"
   },
   "lint-staged": {
-    "frontend/src/**/*.{js,vue,ts}": "eslint",
-    "backend-symfony/src/**/*.php": [
+    "./frontend-vue/src/**/*.{js,vue,ts}": [
+      "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js",
+      "npx --prefix ./frontend-vue prettier --write --config ./frontend-vue/.prettierrc",
+      "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js"
+    ],
+    "./backend-symfony/src/**/*.php": [
       "vendor/bin/phpcs --standard=PSR12",
       "vendor/bin/phpstan analyse",
       "vendor/bin/psalm"
