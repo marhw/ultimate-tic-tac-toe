@@ -12,7 +12,8 @@
     "frontend/src/**/*.{js,vue,ts}": "eslint",
     "backend-symfony/src/**/*.php": [
       "vendor/bin/phpcs --standard=PSR12",
-      "vendor/bin/phpstan analyse"
+      "vendor/bin/phpstan analyse",
+      "vendor/bin/psalm"
     ]
   }
 }

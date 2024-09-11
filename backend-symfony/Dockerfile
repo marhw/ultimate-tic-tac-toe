@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-COPY docker-res/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY .docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 WORKDIR /app
 
