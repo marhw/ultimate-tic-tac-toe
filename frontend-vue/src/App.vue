@@ -1,11 +1,13 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
- APP - test pre commit with husky
+  <StatusBar/>
+  <Board/>
+
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import Board from "./components/Board.vue";
+import StatusBar from "./components/StatusBar.vue";
+</script>
 
+<style scoped>
 </style>
