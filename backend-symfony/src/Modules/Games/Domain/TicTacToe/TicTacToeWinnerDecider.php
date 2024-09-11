@@ -2,6 +2,8 @@
 
 namespace App\Modules\Games\Domain\TicTacToe;
 
+use App\Modules\Games\Domain\Shared\BoardElement;
+
 final class TicTacToeWinnerDecider
 {
     public function decideWinner(TicTacToeBoard $board): TicTacToePiece | null
@@ -23,7 +25,7 @@ final class TicTacToeWinnerDecider
     }
 
     /**
-     * @param array<TicTacToePiece> $set
+     * @param array<BoardElement<TicTacToePiece>> $set
      */
     private function checkWinner(array $set): TicTacToePiece | null
     {
@@ -31,14 +33,14 @@ final class TicTacToeWinnerDecider
             return null;
         }
 
-        $first = $set[0];
+        $firstBoardElement = $set[0];
 
-        foreach ($set as $piece) {
-            if (!$first->equals($piece)) {
+        foreach ($set as $boardElement) {
+            if (!$firstBoardElement->piece()->equals($boardElement->piece())) {
                 return null;
             }
         }
 
-        return $first;
+        return $firstBoardElement->piece();
     }
 }

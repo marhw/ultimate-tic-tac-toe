@@ -8,22 +8,14 @@ namespace App\Modules\Games\Domain\Shared;
 abstract class Board
 {
     /**
-     * @param array<TPiece> $pieces
+     * @param array<BoardElement<TPiece>> $pieces
      */
     public function __construct(protected readonly BoardSize $size, private array $pieces = [])
     {
     }
 
     /**
-     * @return array<TPiece> $pieces
-     */
-    public function getRow(int $row): array
-    {
-        return array_filter($this->pieces, fn($piece) => $piece->position()->y() === $row);
-    }
-
-    /**
-     * @return array<array<TPiece>> $pieces
+     * @return array<array<BoardElement<TPiece>>>
      */
     public function getRows(): array
     {
@@ -36,7 +28,15 @@ abstract class Board
     }
 
     /**
-     * @return array<array<TPiece>> $pieces
+     * @return array<BoardElement<TPiece>>
+     */
+    public function getRow(int $row): array
+    {
+        return array_filter($this->pieces, fn($piece) => $piece->y() === $row);
+    }
+
+    /**
+     * @return array<array<BoardElement<TPiece>>>
      */
     public function getColumns(): array
     {
@@ -48,9 +48,12 @@ abstract class Board
         return $columns;
     }
 
+    /**
+     * @return array<BoardElement<TPiece>>
+     */
     public function getColumn(int $column): array
     {
-        return array_filter($this->pieces, fn($piece) => $piece->position()->x() === $column);
+        return array_filter($this->pieces, fn($piece) => $piece->x() === $column);
     }
 
     /**
@@ -65,7 +68,12 @@ abstract class Board
             return;
         }
 
-        $this->pieces[$index] = $piece;
+        $this->pieces[$index] = new BoardElement($position->x(), $position->y(), $piece);
+    }
+
+    protected function positionToBoardIndex(BoardPosition $position): int
+    {
+        return $position->x() * $position->y() + $position->x();
     }
 
     public function isPositionOccupied(BoardPosition $position): bool
@@ -79,15 +87,6 @@ abstract class Board
         return $this->size;
     }
 
-    /**
-     * @return TPiece|null
-     */
-    public function getPieceAt(BoardPosition $position)
-    {
-        $index = $this->positionToBoardIndex($position);
-        return $this->getPieceByIndex($index);
-    }
-
     public function clear(): void
     {
         $this->pieces = [];
@@ -98,21 +97,15 @@ abstract class Board
         $this->pieces = [];
     }
 
-
-    protected function positionToBoardIndex(BoardPosition $position): int
-    {
-        return $position->x() * $position->y() + $position->x();
-    }
-
     protected function coordsToBoardIndex(int $x, int $y): int
     {
         return $x * $y + $x;
     }
 
     /**
-     * @return TPiece|null
+     * @return BoardElement<TPiece>|null
      */
-    protected function getPieceByIndex(int $index)
+    protected function getPieceByIndex(int $index): BoardElement | null
     {
         return $this->pieces[$index] ?? null;
     }

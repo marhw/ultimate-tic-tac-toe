@@ -4,6 +4,7 @@ namespace App\Modules\Games\Domain\TicTacToe;
 
 use App\Modules\Games\Domain\Shared\Board;
 use App\Modules\Games\Domain\Shared\BoardSize;
+use App\Modules\Games\Domain\Shared\BoardElement;
 
 /**
  * @extends Board<TicTacToePiece>
@@ -13,7 +14,7 @@ final class TicTacToeBoard extends Board
     public const SIZE = 3;
 
     /**
-     * @param array<TicTacToePiece> $pieces
+     * @param array<BoardElement<TicTacToePiece>> $pieces
      */
     public function __construct(array $pieces = [])
     {
@@ -21,7 +22,7 @@ final class TicTacToeBoard extends Board
     }
 
     /**
-     * @return array<TicTacToePiece>
+     * @return array<BoardElement<TicTacToePiece>>
      */
     public function getTopLeftToBottomRightDiagonal(): array
     {
@@ -35,7 +36,7 @@ final class TicTacToeBoard extends Board
     }
 
     /**
-     * @return array<TicTacToePiece>
+     * @return array<BoardElement<TicTacToePiece>>
      */
     public function getBottomLeftToTopRightDiagonal(): array
     {
@@ -49,7 +50,7 @@ final class TicTacToeBoard extends Board
     }
 
     /**
-     * @return array<array<TicTacToePiece>>
+     * @return array<array<BoardElement<TicTacToePiece>>>
      */
     public function getDiagonals(): array
     {
