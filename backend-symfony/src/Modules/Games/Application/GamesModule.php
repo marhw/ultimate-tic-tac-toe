@@ -36,8 +36,14 @@ class GamesModule implements IGamesModule
         $this->gameService->removeGame();
     }
 
-    public function getCurrentGameState(): GameResponse|GameNotStartedYet
+    public function getCurrentGameState(): GameNotStartedYet | GameResponse
     {
-        return $this->gameQueryService->getCurrentGameState();
+        $result = $this->gameQueryService->getCurrentGameState();
+
+        if ($result === null) {
+            return new GameNotStartedYet();
+        }
+
+        return $result;
     }
 }

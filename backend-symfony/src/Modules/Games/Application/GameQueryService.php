@@ -7,5 +7,5 @@ use App\Modules\Games\Application\Response\GameResponse;
 
 interface GameQueryService
 {
-    public function getCurrentGameState(): GameResponse | GameNotStartedYet;
+    public function getCurrentGameState(): GameResponse | null;
 }
