@@ -1,41 +1,47 @@
 <template>
-  <div>Board</div>
-
   <div class="board">
-    <template v-for="(row, xIndex) in gameState?.board" :key="xIndex">
-      <template v-for="(cellValue, yIndex) in row" :key="xIndex + ' ' + yIndex">
-        <div class="cell" @click="() => makeAMove({x: xIndex, y: yIndex})">{{ cellValue }}</div>
+    <template v-if="board">
+      <template v-for="(element, elementIndex) in board" :key="elementIndex">
+        <div v-if="isO(element.piece)" class="cell">
+          <OPiece />
+        </div>
+        <div v-if="isX(element.piece)" class="cell">
+          <XPiece />
+        </div>
+        <div
+          v-if="isEmptyPiece(element.piece)" class="empty-cell cell"
+          @click="() => makeAMove({ x: element.x, y: element.y })"
+        />
       </template>
     </template>
   </div>
-
 </template>
 
 <script lang="ts" setup>
-import {computed} from "vue";
-import {useGameModule} from "../modules/gameModule.ts";
+  import {useGameModule} from '../modules/gameModule.ts'
+  import OPiece from './OPiece.vue'
+  import XPiece from './XPiece.vue'
 
-const gameModule = useGameModule();
+  const {makeAMove, getBoardRef, isO, isX, isEmptyPiece} = useGameModule()
 
-const makeAMove = (position: {x: number, y: number}) => {
-  gameModule.makeAMove(position);
-}
-
-const gameState = computed(() => gameModule.gameState.value);
+  const board = getBoardRef();
 </script>
-
 
 <style scoped>
 .cell {
-  display: inline-block;
-  border: 1px solid black;
-  text-align: center;
-  line-height: 50px;
+  border: 1px solid #3445b6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-cell {
+  cursor: pointer;
 }
 
 .board {
   display: grid;
-  grid-template-columns: 50px 50px 50px;
-  grid-template-rows: 50px 50px 50px;
+  grid-template-columns: 80px 80px 80px;
+  grid-template-rows: 80px 80px 80px;
 }
 </style>

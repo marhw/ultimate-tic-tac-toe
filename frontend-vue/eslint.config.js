@@ -2,7 +2,6 @@ import globals from 'globals';
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
 import vue from 'eslint-plugin-vue';
-import prettier from 'eslint-plugin-prettier/recommended';
 
 export default [
     {
@@ -38,13 +37,25 @@ export default [
     },
     {
         rules: {
+            'vue/html-closing-bracket-newline': [
+                "error",
+                {
+                    "singleline": "never",
+                    "multiline": "always",
+                    "selfClosingTag": {
+                        "singleline": "never",
+                        "multiline": "always"
+                    }
+                }
+            ],
+            "vue/script-indent": ["error", 2, { "baseIndent": 1 }],
+            "vue/max-attributes-per-line": 'off',
             'vue/multi-word-component-names': 'off',
             'vue/attribute-hyphenation': ['error', 'never'],
             'vue/v-on-event-hyphenation': ['error', 'never'],
             'vue/no-v-html': 'off',
-
             'vue/block-lang': ['error', {script: {lang: 'ts'}}],
-            'vue/block-order': ['error', {order: ['script[setup]', 'template', 'style[scoped]']}],
+            'vue/block-order': ['error', {order: ['template', 'script[setup]', 'style[scoped]']}],
             'vue/component-api-style': ['error', ['script-setup']],
             'vue/component-name-in-template-casing': 'error',
             'vue/custom-event-name-casing': 'error',
@@ -76,12 +87,6 @@ export default [
             'vue/require-typed-ref': 'warn',
             'vue/v-for-delimiter-style': 'error',
             'vue/valid-define-options': 'error',
-        },
-    },
-    prettier,
-    {
-        rules: {
-            'prettier/prettier': 'warn',
         },
     },
 ];

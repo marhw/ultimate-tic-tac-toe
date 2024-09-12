@@ -9,7 +9,7 @@ export class APIError extends Error {
     }
 }
 
-async function handleFetchReq(req: () => Promise<any>) {
+async function handleFetchReq(req: () => Promise<Response>) {
     try {
         const response = await req()
         if (!response.ok) {
@@ -37,7 +37,7 @@ async function getReq<TResult>(
     url: string
 ): Promise<TResult | APIError | Error> {
     return handleFetchReq(() =>
-        fetch(withBaseUrl(url), { method: 'GET', headers: prepareHeaders() })
+        fetch(withBaseUrl(url), {method: 'GET', headers: prepareHeaders()})
     )
 }
 
@@ -58,7 +58,7 @@ async function deleteReq<TResult>(
     url: string
 ): Promise<TResult | APIError | Error> {
     return handleFetchReq(() =>
-        fetch(withBaseUrl(url), { method: 'DELETE', headers: prepareHeaders() })
+        fetch(withBaseUrl(url), {method: 'DELETE', headers: prepareHeaders()})
     )
 }
 

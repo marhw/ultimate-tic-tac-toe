@@ -1,0 +1,20 @@
+#app {
+    width: 100vw;
+    height: 100vh;
+}
+
+@font-face {
+    font-family: 'Aspecta'; /* Name for the custom font */
+    src: url('./assets/Aspekta-400.ttf') format('truetype'); /* Path to the font file */
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Aspecta', sans-serif; /* Apply the custom font */
+    color: #9afff6;
+}
+
+* {
+    box-sizing: border-box;
+}
