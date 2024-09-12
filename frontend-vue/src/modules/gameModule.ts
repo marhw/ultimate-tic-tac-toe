@@ -2,12 +2,12 @@ import {computed, reactive} from 'vue'
 import {Board, BoardPiece, GameState, Piece, Score, useGameAPI} from '../api/gameAPI.ts'
 import {APIError} from "../api/api.ts";
 
-type BoardPosition = {
+type GameBoardPosition = {
     x: number
     y: number
 }
 
-type PlayerSetup = {
+type GamePlayerSetup = {
     player1: Piece
     player2: Piece
 }
@@ -15,21 +15,25 @@ type PlayerSetup = {
 export type GameEmptyAblePiece = BoardPiece;
 export type GamePiece = Piece;
 export type GameScore = Score;
-export type GameBoardPiece = {x: number, y: number, piece: GameEmptyAblePiece}
+export type GameBoardPiece = GameBoardPosition & {piece: GameEmptyAblePiece}
 export type GameBoard = GameBoardPiece[];
 
 const state = reactive<{
     gameState?: GameState;
-    whoMoved?: Piece,
-    playerSetup?: PlayerSetup
+    playerSetup?: GamePlayerSetup
     board?: GameBoard,
     score?: GameScore,
-    winner?: BoardPiece,
-    nextPlayer?: GamePiece
-}>({board: []})
+    winner?: GameEmptyAblePiece,
+    nextPlayer?: GamePiece,
+    apiCallInProgress: boolean
+}>({board: [], apiCallInProgress: false})
+
+const isO = (piece: GameEmptyAblePiece | undefined) => piece === 'O';
+const isX = (piece: GameEmptyAblePiece | undefined) => piece === 'X';
+const isEmptyPiece = (piece: GameEmptyAblePiece | undefined) => piece === '';
 
 function isGamePieceInverted() {
-    return state.playerSetup?.player1 === 'X';
+    return isX(state.playerSetup?.player1);
 }
 
 function getPieceFromPerspectiveOfPlayer<T>(piece: T)
@@ -79,31 +83,40 @@ function handleGameStateResponse(gameState: GameState | Error | APIError) {
     state.nextPlayer = mapApiCurrentTurnToGameNextPlayer(gameState.currentTurn);
 }
 
+const freeApi = () => state.apiCallInProgress = false;
+const lockApi = () => state.apiCallInProgress = true;
+
 export function useGameModule() {
     const gameAPI = useGameAPI()
 
     async function startGame() {
+        if (state.apiCallInProgress) {
+            return;
+        }
+
         try {
+            lockApi();
             const currentGameState = await gameAPI.getGame()
             handleGameStateResponse(currentGameState);
         } catch (e) {
             console.error(e)
+        } finally {
+            freeApi()
         }
     }
 
-    async function makeAMove(position: BoardPosition) {
+    async function makeAMove(position: GameBoardPosition) {
+        if (state.apiCallInProgress) {
+            return;
+        }
+
         if (!state.playerSetup || !state.gameState) {
             console.error('Game state not found')
             return
         }
 
-        if (state.whoMoved === state.nextPlayer) {
-            return
-        }
-
-        state.whoMoved = state.nextPlayer
-
         try {
+            lockApi();
             const currentGameState = await gameAPI.makeMove({
                 piece: state.gameState.currentTurn,
                 ...position,
@@ -112,23 +125,35 @@ export function useGameModule() {
             handleGameStateResponse(currentGameState);
         } catch (e) {
             console.error(e);
+        } finally {
+            freeApi();
         }
     }
 
     async function resetBoard() {
+        if (state.apiCallInProgress) {
+            return;
+        }
+
         try {
+            lockApi();
             const currentGameState = await gameAPI.resetGame();
             handleGameStateResponse(currentGameState);
-            state.whoMoved = undefined
         } catch (e) {
             console.error(e);
+        } finally {
+            freeApi();
         }
     }
 
     async function resetGame() {
-        await gameAPI.deleteGame()
+        if (state.apiCallInProgress) {
+            return;
+        }
+
+        lockApi();
+        await gameAPI.deleteGame().finally(() => freeApi())
         state.gameState = undefined
-        state.whoMoved = undefined
         state.playerSetup = undefined
         state.board = undefined
         state.score = undefined
@@ -137,7 +162,7 @@ export function useGameModule() {
     }
 
     async function pickPiece(piece: GamePiece) {
-        if(piece === 'O') {
+        if(isO(piece)) {
             state.playerSetup = {player1: 'O', player2: 'X'}
         } else {
             state.playerSetup = {player1: 'X', player2: 'O'}
@@ -151,10 +176,6 @@ export function useGameModule() {
     const nextPlayerRef = computed(() => state.nextPlayer);
     const winnerRef = computed(() => state.winner);
     const playerSetupRef = computed(() => state.playerSetup);
-
-    const isO = (piece: GameEmptyAblePiece | undefined) => piece === 'O';
-    const isX = (piece: GameEmptyAblePiece | undefined) => piece === 'X';
-    const isEmptyPiece = (piece: GameEmptyAblePiece | undefined) => piece === '';
 
     return {
         makeAMove,
