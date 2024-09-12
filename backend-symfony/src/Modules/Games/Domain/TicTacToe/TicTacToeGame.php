@@ -53,8 +53,11 @@ class TicTacToeGame implements Game
 
         $this->board->setPieceAt($position, $piece);
 
-        $this->switchPlayer();
         $this->checkWinner();
+
+        if ($this->winner === null) {
+            $this->switchPlayer();
+        }
 
         return null;
     }
