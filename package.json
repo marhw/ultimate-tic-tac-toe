@@ -13,8 +13,6 @@
   },
   "lint-staged": {
     "./frontend-vue/src/**/*.{vue,ts}": [
-      "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js",
-      "npx --prefix ./frontend-vue prettier --write --config ./frontend-vue/.prettierrc",
       "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js"
     ],
     "./backend-symfony/src/**/*.php": [
