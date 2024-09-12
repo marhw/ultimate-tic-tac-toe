@@ -9,19 +9,20 @@ RUN apt-get update && apt-get install -y \
     git \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
-    && docker-php-ext-install intl zip
+    && docker-php-ext-install intl zip opcache
 
-RUN a2enmod rewrite
+COPY ./.docker/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY ./.docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-COPY ./.docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
 
 WORKDIR /app
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
-RUN chmod -R 777 var/cache var/log
+
 RUN composer install
 
 EXPOSE 80
