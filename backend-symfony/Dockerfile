@@ -21,6 +21,7 @@ WORKDIR /app
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
+RUN chmod -R 777 var/cache var/log
 RUN composer install
 
 EXPOSE 80

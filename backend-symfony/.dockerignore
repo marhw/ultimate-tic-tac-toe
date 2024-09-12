@@ -3,10 +3,7 @@ vendor
 node_modules
 
 # Ignore local environment and secret files
-.env.local
-.env.test.local
-.env.development.local
-.env.production.local
+.env.dist
 
 # Ignore logs and caches
 var/log/*
