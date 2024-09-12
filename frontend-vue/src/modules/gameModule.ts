@@ -218,6 +218,7 @@ export function useGameModule() {
     const winnerRef = computed(() => state.winner);
     const playerSetupRef = computed(() => state.playerSetup);
     const gameProgressStateRef = computed(() => state.gameProgressState);
+    const isApiCallInProgressRef = computed(() => state.isApiCallInProgress);
 
     return {
         startNewGame,
@@ -236,5 +237,6 @@ export function useGameModule() {
         boardRef: () => boardRef,
         playerSetupRef: () => playerSetupRef,
         gameProgressStateRef: () => gameProgressStateRef,
+        isApiCallInProgressRef: () => isApiCallInProgressRef
     }
 }

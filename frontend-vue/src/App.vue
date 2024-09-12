@@ -1,6 +1,9 @@
 <template>
   <div class="main-container">
     <Header id="header" />
+    <div id="loader">
+      <Loader v-if="isApiCallInProgress" />
+    </div>
     <template v-if="gameProgressState === GameProgressState.IN_PROGRESS">
       <StatusBar id="status-bar" />
       <Board />
@@ -13,6 +16,7 @@
 
 <script lang="ts" setup>
   import Board from './components/Board.vue'
+  import Loader from "./components/Loader.vue";
   import StatusBar from './components/StatusBar.vue'
   import Header from './components/Header.vue'
   import WinnerPopup from "./components/WinnerPopup.vue";
@@ -20,8 +24,9 @@
   import PickPiece from "./components/PickPiece.vue";
   import StartGameButtons from "./components/StartGameButtons.vue";
 
-  const {gameProgressStateRef} = useGameModule()
+  const {gameProgressStateRef, isApiCallInProgressRef} = useGameModule()
   const gameProgressState = gameProgressStateRef();
+  const isApiCallInProgress = isApiCallInProgressRef();
 </script>
 
 <style scoped>
@@ -42,7 +47,12 @@
 
 #header {
   margin-top: 80px;
-  margin-bottom: 120px;
+  margin-bottom: 40px;
+}
+
+#loader {
+  height: 40px;
+  margin-bottom: 40px;
 }
 
 #status-bar {
