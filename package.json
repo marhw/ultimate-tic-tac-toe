@@ -8,6 +8,9 @@
     "husky": "^9.1.5",
     "lint-staged": "^15.2.10"
   },
+  "scripts": {
+      "fix-lint-backend": "php ./backend-symfony/vendor/bin/phpcbf --standard=PSR12 ./backend-symfony/src"
+  },
   "lint-staged": {
     "./frontend-vue/src/**/*.{js,vue,ts}": [
       "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js",

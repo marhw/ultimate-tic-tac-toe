@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Controller\DTO\MakeMoveDTO;
 use App\Modules\Games\Application\Response\GameNotStartedYet;
 use App\Modules\Games\GamesModule;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
 class GameController extends AbstractController
@@ -24,8 +26,9 @@ class GameController extends AbstractController
     }
 
     #[Route('/move', name: 'make-move', methods: ['POST'], format: 'json')]
-    public function makeMove(): JsonResponse
+    public function makeMove(#[MapRequestPayload] MakeMoveDTO $makeMoveDTO): JsonResponse
     {
+        $this->gamesModule->makeMove($makeMoveDTO->x, $makeMoveDTO->y, $makeMoveDTO->piece);
         return $this->getCurrentGameState();
     }
 
