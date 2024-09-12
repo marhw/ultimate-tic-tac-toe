@@ -9,10 +9,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class BoardDocument
 {
     #[MongoDB\Field(type: "int")]
-    private string $sizeX;
+    private int $sizeX;
 
     #[MongoDB\Field(type: "int")]
-    private string $sizeY;
+    private int $sizeY;
 
     #[MongoDB\EmbedMany(targetDocument: BoardElementDocument::class, storeEmptyArray: true)]
     private ArrayCollection $elements;
@@ -42,6 +42,9 @@ class BoardDocument
         $this->sizeY = $sizeY;
     }
 
+    /**
+     * @return ArrayCollection<int, BoardElementDocument>
+     */
     public function getElements(): ArrayCollection
     {
         return $this->elements;

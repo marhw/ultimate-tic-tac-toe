@@ -22,9 +22,7 @@ class TicTacToeGameService
 
     public function startGame(): void
     {
-        $game = $this->gameRepository->findGame();
-
-        if ($game instanceof TicTacToeGame) {
+        if ($this->gameRepository->isGameInProgress()) {
             return;
         }
 

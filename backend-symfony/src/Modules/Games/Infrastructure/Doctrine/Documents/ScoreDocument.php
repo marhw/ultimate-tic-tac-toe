@@ -11,25 +11,25 @@ class ScoreDocument
     private string $player;
 
     #[MongoDB\Field(type: "int")]
-    private string $score;
-
-    public function setPlayerId(string $playerId): void
-    {
-        $this->player = (string) $playerId;
-    }
-
-    public function setScore(int $scoreValue)
-    {
-        $this->score = $scoreValue;
-    }
+    private int $score;
 
     public function getPlayer(): string
     {
         return $this->player;
     }
 
-    public function getScore(): string
+    public function setPlayer(string $player): void
+    {
+        $this->player = $player;
+    }
+
+    public function getScore(): int
     {
         return $this->score;
+    }
+
+    public function setScore(int $scoreValue): void
+    {
+        $this->score = $scoreValue;
     }
 }

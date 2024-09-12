@@ -31,7 +31,7 @@ class TicTacToeGameMapper
         $board = $reflection->getProperty('board')->getValue($ticTacToeGame);
         $document->setBoard(self::mapBoardToDocument($board));
 
-        /** @var TicTacToeScore $board */
+        /** @var TicTacToeScore $score */
         $score = $reflection->getProperty('score')->getValue($ticTacToeGame);
         $document->setScore(self::mapScoreToDocuments($score));
 
@@ -78,14 +78,23 @@ class TicTacToeGameMapper
         /** @var array<ScoreDocument> $documents */
         $documents = [];
 
-        foreach ($currentScore as $playerId => $scoreValue) {
+        foreach ($currentScore as $player => $scoreValue) {
             $document = new ScoreDocument();
-            $document->setPlayerId($playerId);
+            $document->setPlayer($player);
             $document->setScore($scoreValue);
 
             $documents[] = $document;
         }
 
         return $documents;
+    }
+
+    public static function mapDocumentToGameObject(TicTacToeGameDocument | null $doc): TicTacToeGame | null
+    {
+        if ($doc === null) {
+            return null;
+        }
+
+        return null;
     }
 }

@@ -53,6 +53,9 @@ class TicTacToeGameDocument
         $this->winner = $winner;
     }
 
+    /**
+     * @return ArrayCollection<int, ScoreDocument>
+     */
     public function getScore(): ArrayCollection
     {
         return $this->score;
@@ -64,7 +67,7 @@ class TicTacToeGameDocument
     public function setScore(array $score): void
     {
         foreach ($score as $scoreDocument) {
-            $this->score->add($scoreDocument);
+            $this->score[] = $scoreDocument;
         }
     }
 

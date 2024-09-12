@@ -1,0 +1,13 @@
+monolog:
+  handlers:
+    main:
+      type: stream
+      path: '%kernel.logs_dir%/%kernel.environment%.log'
+      level: debug
+      channels: ["!event"]
+
+    # Log all errors to a specific file
+    error_log:
+      type: stream
+      path: '%kernel.logs_dir%/error.log'
+      level: error
