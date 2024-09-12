@@ -1,0 +1,10 @@
+doctrine_mongodb:
+  document_managers:
+    default:
+      mappings:
+        GamesModule:
+          type: attribute
+          dir: '%kernel.project_dir%/src/Modules/Games/Infrastructure/Doctrine'
+          prefix: 'App\Modules\Games\Infrastructure\Doctrine'
+          alias: GamesModule
+          is_bundle: false

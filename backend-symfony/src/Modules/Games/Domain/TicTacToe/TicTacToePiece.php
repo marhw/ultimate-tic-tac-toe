@@ -24,13 +24,13 @@ final class TicTacToePiece extends Piece implements Player
         return new TicTacToePiece($availablePiece->value);
     }
 
-    public function piece(): string
+    public function symbol(): string
     {
-        return $this->piece;
+        return $this->symbol;
     }
 
     public function id(): string
     {
-        return $this->piece;
+        return $this->symbol;
     }
 }

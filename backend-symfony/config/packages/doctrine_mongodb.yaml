@@ -1,3 +1,6 @@
+imports:
+  - { resource: '/app/src/Modules/Games/Infrastructure/games_mongodb.yaml' }
+
 doctrine_mongodb:
   connections:
     default:

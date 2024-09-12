@@ -22,6 +22,9 @@ abstract class Score
         $this->score[$player->id()] += $score;
     }
 
+    /**
+     * @return array<string, int>
+     */
     public function getCurrentScore(): array
     {
         return $this->score;
