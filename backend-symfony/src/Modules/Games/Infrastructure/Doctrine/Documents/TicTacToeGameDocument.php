@@ -18,6 +18,9 @@ class TicTacToeGameDocument
     private string $nextPlayer;
 
     #[MongoDB\Field(type: "string", nullable: true)]
+    private ?string $playerWhoStartedLastGame;
+
+    #[MongoDB\Field(type: "string", nullable: true)]
     private ?string $winner;
 
     #[MongoDB\EmbedMany(targetDocument: ScoreDocument::class, storeEmptyArray: true)]
@@ -80,5 +83,15 @@ class TicTacToeGameDocument
     public function setBoard(BoardDocument $board): void
     {
         $this->board = $board;
+    }
+
+    public function getPlayerWhoStartedLastGame(): ?string
+    {
+        return $this->playerWhoStartedLastGame;
+    }
+
+    public function setPlayerWhoStartedLastGame(?string $symbol): void
+    {
+        $this->playerWhoStartedLastGame = $symbol;
     }
 }

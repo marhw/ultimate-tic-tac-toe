@@ -4,12 +4,19 @@ namespace App\Modules\Games\Domain\TicTacToe;
 
 final class TicTacToePlayerOrderCalculator
 {
-    public function decideFirstPlayer(): TicTacToePiece
+    public function selectPlayerForNextGame(TicTacToePiece | null $playerWhichLastTimeStarted): TicTacToePiece
     {
-        return TicTacToeValidPieces::O->toPiece();
+        $x = TicTacToeValidPieces::X->toPiece();
+        $o = TicTacToeValidPieces::O->toPiece();
+
+        if ($playerWhichLastTimeStarted === null) {
+            return $o;
+        }
+
+        return $playerWhichLastTimeStarted->equals($x) ? $o : $x;
     }
 
-    public function calculateNextPlayer(TicTacToePiece $currentPlayer): TicTacToePiece
+    public function selectPlayerForNextTurn(TicTacToePiece $currentPlayer): TicTacToePiece
     {
         $x = TicTacToeValidPieces::X->toPiece();
         $o = TicTacToeValidPieces::O->toPiece();

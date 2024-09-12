@@ -12,19 +12,22 @@ class TicTacToeGameWrapper extends TicTacToeGame
     {
         parent::__construct();
 
-        $this->nextPlayer = TicTacToeGameMapper::stringToPiece($doc->getNextPlayer());
-        $winner = $doc->getWinner();
-        $this->winner = $winner !== null ? TicTacToeGameMapper::stringToPiece($winner) : null;
         $this->board = TicTacToeGameMapper::mapDocumentToBoard($doc->getBoard());
         $this->score = TicTacToeGameMapper::mapDocumentsToScore($doc->getScore());
+        $this->nextPlayer = TicTacToeGameMapper::stringToPiece($doc->getNextPlayer());
+        $this->winner = TicTacToeGameMapper::nullableStringToPiece($doc->getWinner());
+        $this->playerWhoStartedLastGame = TicTacToeGameMapper::nullableStringToPiece(
+            $doc->getPlayerWhoStartedLastGame()
+        );
     }
 
     public function applyChangesAndGetDoc(): TicTacToeGameDocument
     {
         $this->doc->setBoard(TicTacToeGameMapper::mapBoardToDocument($this->board));
+        $this->doc->setScore(TicTacToeGameMapper::mapScoreToDocuments($this->score));
         $this->doc->setNextPlayer($this->nextPlayer->symbol());
         $this->doc->setWinner($this->winner?->symbol());
-        $this->doc->setScore(TicTacToeGameMapper::mapScoreToDocuments($this->score));
+        $this->doc->setPlayerWhoStartedLastGame($this->playerWhoStartedLastGame?->symbol());
 
         return $this->doc;
     }

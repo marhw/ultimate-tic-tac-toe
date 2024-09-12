@@ -13,6 +13,7 @@ class TicTacToeGame implements Game
 {
     protected TicTacToeBoard $board;
     protected TicTacToePiece $nextPlayer;
+    protected ?TicTacToePiece $playerWhoStartedLastGame;
     protected ?TicTacToePiece $winner;
     protected TicTacToeScore $score;
     protected TicTacToeWinnerDecider $winnerDecider;
@@ -25,7 +26,8 @@ class TicTacToeGame implements Game
         $this->winner = null;
         $this->winnerDecider = new TicTacToeWinnerDecider();
         $this->playerOrderCalculator = new TicTacToePlayerOrderCalculator();
-        $this->nextPlayer = $this->playerOrderCalculator->decideFirstPlayer();
+        $this->playerWhoStartedLastGame = null;
+        $this->pickNextPlayer(true);
     }
 
     public function placePiece(
@@ -56,7 +58,7 @@ class TicTacToeGame implements Game
         $this->checkWinner();
 
         if ($this->winner === null) {
-            $this->switchPlayer();
+            $this->pickNextPlayer();
         }
 
         return null;
@@ -71,15 +73,20 @@ class TicTacToeGame implements Game
         }
     }
 
-    private function switchPlayer(): void
+    private function pickNextPlayer(bool $isNewGame = false): void
     {
-        $this->nextPlayer = $this->playerOrderCalculator->calculateNextPlayer($this->nextPlayer);
+        if ($isNewGame) {
+            $this->nextPlayer = $this->playerOrderCalculator->selectPlayerForNextGame($this->playerWhoStartedLastGame);
+            return;
+        }
+
+        $this->nextPlayer = $this->playerOrderCalculator->selectPlayerForNextTurn($this->nextPlayer);
     }
 
     public function resetGame(): void
     {
         $this->board->reset();
         $this->winner = null;
-        $this->switchPlayer();
+        $this->pickNextPlayer(true);
     }
 }

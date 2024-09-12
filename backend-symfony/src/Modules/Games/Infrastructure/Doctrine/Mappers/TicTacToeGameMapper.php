@@ -14,7 +14,6 @@ use App\Modules\Games\Infrastructure\Doctrine\Documents\ScoreDocument;
 use App\Modules\Games\Infrastructure\Doctrine\Documents\TicTacToeGameDocument;
 use Doctrine\Common\Collections\ArrayCollection;
 use Error;
-use Exception;
 use ReflectionClass;
 
 class TicTacToeGameMapper
@@ -27,6 +26,10 @@ class TicTacToeGameMapper
         /** @var TicTacToePiece $nextPlayer */
         $nextPlayer = $reflection->getProperty('nextPlayer')->getValue($ticTacToeGame);
         $document->setNextPlayer($nextPlayer->symbol());
+
+        /** @var TicTacToePiece $playerWhoStartedLastGame */
+        $playerWhoStartedLastGame = $reflection->getProperty('playerWhoStartedLastGame')->getValue($ticTacToeGame);
+        $document->setPlayerWhoStartedLastGame($playerWhoStartedLastGame?->symbol());
 
         /** @var TicTacToePiece | null $winner */
         $winner = $reflection->getProperty('winner')->getValue($ticTacToeGame);
@@ -115,6 +118,15 @@ class TicTacToeGameMapper
         }
 
         return $result;
+    }
+
+    public static function nullableStringToPiece(?string $string): ?TicTacToePiece
+    {
+        if ($string === null) {
+            return null;
+        }
+
+        return self::stringToPiece($string);
     }
 
     /**
