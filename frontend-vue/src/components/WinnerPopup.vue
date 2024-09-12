@@ -1,8 +1,8 @@
 <template>
   <Teleport to="body">
-    <Modal v-if="open" :width="400">
-      <OPiece v-if="isO(localWinner)" />
-      <XPiece v-if="isX(localWinner)" />
+    <Modal v-if="isModalOpen" :width="400">
+      <OPiece v-if="isO(winner)" />
+      <XPiece v-if="isX(winner)" />
       <span class="message">has won!</span>
     </Modal>
   </Teleport>
@@ -14,28 +14,24 @@
   import {useGameModule} from "../modules/gameModule.ts";
   import OPiece from "./OPiece.vue";
   import XPiece from "./XPiece.vue";
-  import { BoardPiece } from "../api/gameAPI";
 
-  const {resetBoard, getWinnerRef, isX, isO} = useGameModule();
-  const winnerRef = getWinnerRef();
+  const {resetBoard, winnerRef, isX, isO, isEmptyPiece} = useGameModule();
+  const winner = winnerRef();
 
-  watch(winnerRef, (winner) => {
-    if (winner === undefined) {
+  watch(winner, (newWinner) => {
+    if (newWinner === undefined) {
       return
     }
 
-    if (winner !== "") {
-      open.value = true;
-      localWinner.value = winner;
-      setTimeout(() => resetBoard().then(() => {
-        open.value = false
-        localWinner.value = undefined;
-      }), 2000)
+    if(isEmptyPiece(newWinner)) {
+      return
     }
-  })
-  const localWinner = ref<BoardPiece | undefined>(undefined);
 
-  const open = ref(false);
+    isModalOpen.value = true;
+    setTimeout(() => resetBoard().finally(() => isModalOpen.value = false), 2000)
+  })
+
+  const isModalOpen = ref(false);
 
 </script>
 

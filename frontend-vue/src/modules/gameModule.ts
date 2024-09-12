@@ -15,18 +15,33 @@ type GamePlayerSetup = {
 export type GameEmptyAblePiece = BoardPiece;
 export type GamePiece = Piece;
 export type GameScore = Score;
-export type GameBoardPiece = GameBoardPosition & {piece: GameEmptyAblePiece}
+export type GameBoardPiece = GameBoardPosition & { piece: GameEmptyAblePiece }
 export type GameBoard = GameBoardPiece[];
 
+export enum GameProgressState {
+    NOT_STARTED = 'NOT_STARTED',
+    PICKING_PIECE = 'PICKING_PIECE',
+    IN_PROGRESS = 'IN_PROGRESS',
+}
+
 const state = reactive<{
-    gameState?: GameState;
+    isGameStarted: boolean;
+    gameStateFromApi?: GameState;
     playerSetup?: GamePlayerSetup
     board?: GameBoard,
     score?: GameScore,
     winner?: GameEmptyAblePiece,
     nextPlayer?: GamePiece,
-    apiCallInProgress: boolean
-}>({board: [], apiCallInProgress: false})
+    isApiCallInProgress: boolean,
+    gameProgressState: GameProgressState
+}>({
+    board: [],
+    isApiCallInProgress: false,
+    playerSetup: loadPlayerSetupFromLocalStorage(),
+    isGameStarted: false,
+    gameProgressState: GameProgressState.NOT_STARTED
+});
+
 
 const isO = (piece: GameEmptyAblePiece | undefined) => piece === 'O';
 const isX = (piece: GameEmptyAblePiece | undefined) => piece === 'X';
@@ -36,11 +51,10 @@ function isGamePieceInverted() {
     return isX(state.playerSetup?.player1);
 }
 
-function getPieceFromPerspectiveOfPlayer<T>(piece: T)
-{
+function getPieceFromPerspectiveOfPlayer<T>(piece: T) {
     if (state.playerSetup === undefined) {
-       console.error("playerSetup should be defined");
-       return piece;
+        console.error("playerSetup should be defined");
+        return piece;
     }
 
     if (isGamePieceInverted()) {
@@ -76,21 +90,43 @@ function handleGameStateResponse(gameState: GameState | Error | APIError) {
         return
     }
 
-    state.gameState = gameState
+    state.gameStateFromApi = gameState
     state.board = mapApiBoardToGameBoard(gameState.board);
     state.score = mapApiScoreToGameScore(gameState.score);
     state.winner = mapApiVictoryToGameWinner(gameState.victory);
     state.nextPlayer = mapApiCurrentTurnToGameNextPlayer(gameState.currentTurn);
 }
 
-const freeApi = () => state.apiCallInProgress = false;
-const lockApi = () => state.apiCallInProgress = true;
+const freeApi = () => state.isApiCallInProgress = false;
+const lockApi = () => state.isApiCallInProgress = true;
+
+function savePlayerSetupToLocalStorage(playerSetup: GamePlayerSetup) {
+    localStorage.setItem('playerSetup', JSON.stringify(playerSetup));
+}
+
+function loadPlayerSetupFromLocalStorage(): GamePlayerSetup | undefined {
+    const playerSetup = localStorage.getItem('playerSetup');
+    return playerSetup ? JSON.parse(playerSetup) : undefined;
+}
+
+function clearPlayerSetupFromLocalStorage() {
+    localStorage.removeItem('playerSetup');
+}
 
 export function useGameModule() {
     const gameAPI = useGameAPI()
 
-    async function startGame() {
-        if (state.apiCallInProgress) {
+    async function startNewGame() {
+        await resetGame();
+        state.gameProgressState = GameProgressState.PICKING_PIECE;
+    }
+    async function continueGame() {
+        await loadGame();
+        state.gameProgressState = GameProgressState.IN_PROGRESS;
+    }
+
+    async function loadGame() {
+        if (state.isApiCallInProgress) {
             return;
         }
 
@@ -106,11 +142,11 @@ export function useGameModule() {
     }
 
     async function makeAMove(position: GameBoardPosition) {
-        if (state.apiCallInProgress) {
+        if (state.isApiCallInProgress) {
             return;
         }
 
-        if (!state.playerSetup || !state.gameState) {
+        if (!state.playerSetup || !state.gameStateFromApi) {
             console.error('Game state not found')
             return
         }
@@ -118,7 +154,7 @@ export function useGameModule() {
         try {
             lockApi();
             const currentGameState = await gameAPI.makeMove({
-                piece: state.gameState.currentTurn,
+                piece: state.gameStateFromApi.currentTurn,
                 ...position,
             });
 
@@ -131,7 +167,7 @@ export function useGameModule() {
     }
 
     async function resetBoard() {
-        if (state.apiCallInProgress) {
+        if (state.isApiCallInProgress) {
             return;
         }
 
@@ -147,37 +183,45 @@ export function useGameModule() {
     }
 
     async function resetGame() {
-        if (state.apiCallInProgress) {
+        if (state.isApiCallInProgress) {
             return;
         }
 
         lockApi();
         await gameAPI.deleteGame().finally(() => freeApi())
-        state.gameState = undefined
+        state.gameStateFromApi = undefined
         state.playerSetup = undefined
         state.board = undefined
         state.score = undefined
         state.winner = undefined
         state.nextPlayer = undefined
+        clearPlayerSetupFromLocalStorage();
+        state.gameProgressState = GameProgressState.NOT_STARTED;
     }
 
     async function pickPiece(piece: GamePiece) {
-        if(isO(piece)) {
+        if (isO(piece)) {
             state.playerSetup = {player1: 'O', player2: 'X'}
         } else {
             state.playerSetup = {player1: 'X', player2: 'O'}
         }
 
-        await startGame();
+        savePlayerSetupToLocalStorage(state.playerSetup);
+        state.gameProgressState = GameProgressState.IN_PROGRESS;
+        await loadGame();
     }
 
+    const isGameStartedRef = computed(() => state.isGameStarted);
     const boardRef = computed(() => state.board);
     const scoreRef = computed(() => state.score);
     const nextPlayerRef = computed(() => state.nextPlayer);
     const winnerRef = computed(() => state.winner);
     const playerSetupRef = computed(() => state.playerSetup);
+    const gameProgressStateRef = computed(() => state.gameProgressState);
 
     return {
+        startNewGame,
+        continueGame,
         makeAMove,
         resetBoard,
         resetGame,
@@ -185,10 +229,12 @@ export function useGameModule() {
         isO,
         isX,
         isEmptyPiece,
-        getScoreRef: () => scoreRef,
-        getNextPlayerRef: () => nextPlayerRef,
-        getWinnerRef: () => winnerRef,
-        getBoardRef: () => boardRef,
-        getPlayerSetupRef: () => playerSetupRef,
+        isGameStartedRef: () => isGameStartedRef,
+        scoreRef: () => scoreRef,
+        nextPlayerRef: () => nextPlayerRef,
+        winnerRef: () => winnerRef,
+        boardRef: () => boardRef,
+        playerSetupRef: () => playerSetupRef,
+        gameProgressStateRef: () => gameProgressStateRef,
     }
 }

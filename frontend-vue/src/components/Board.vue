@@ -22,9 +22,9 @@
   import OPiece from './OPiece.vue'
   import XPiece from './XPiece.vue'
 
-  const {makeAMove, getBoardRef, isO, isX, isEmptyPiece} = useGameModule()
+  const {makeAMove, boardRef, isO, isX, isEmptyPiece} = useGameModule()
 
-  const board = getBoardRef();
+  const board = boardRef();
 </script>
 
 <style scoped>

@@ -1,16 +1,23 @@
 <template>
-  <div class="button">
-    <div class="inner-button glowing-text">
+  <div class="button" :class="{disabled: props.isDisabled}">
+    <div class="inner-button glowing-text" :class="{disabled: props.isDisabled}">
       <slot />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-
+  const props = defineProps<{
+    isDisabled?: boolean
+  }>()
 </script>
 
 <style scoped>
+.disabled {
+  background-color: #343434 !important;
+  color: #a9a9a9 !important;
+  cursor: default !important;
+}
 
 .button {
   color: #2dc1d0;

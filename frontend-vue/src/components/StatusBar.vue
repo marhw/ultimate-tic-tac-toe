@@ -35,14 +35,14 @@
   const {
     resetBoard,
     resetGame,
-    getScoreRef,
-    getNextPlayerRef,
+    scoreRef,
+    nextPlayerRef,
     isO,
     isX,
   } = useGameModule()
 
-  const score = getScoreRef();
-  const nextPlayer = getNextPlayerRef();
+  const score = scoreRef();
+  const nextPlayer = nextPlayerRef();
 </script>
 
 <style scoped>

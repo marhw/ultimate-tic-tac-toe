@@ -1,15 +1,13 @@
 <template>
   <div class="main-container">
     <Header id="header" />
-    <template v-if="playerSetup">
+    <template v-if="gameProgressState === GameProgressState.IN_PROGRESS">
       <StatusBar id="status-bar" />
       <Board />
       <WinnerPopup />
     </template>
-    <template v-else>
-      <PickPiece />
-    </template>
-    <div id="modal-space" />
+    <PickPiece v-if="gameProgressState === GameProgressState.PICKING_PIECE" />
+    <StartGameButtons v-if="gameProgressState === GameProgressState.NOT_STARTED" />
   </div>
 </template>
 
@@ -18,12 +16,12 @@
   import StatusBar from './components/StatusBar.vue'
   import Header from './components/Header.vue'
   import WinnerPopup from "./components/WinnerPopup.vue";
-  import {useGameModule} from "./modules/gameModule.ts";
+  import {useGameModule, GameProgressState} from "./modules/gameModule.ts";
   import PickPiece from "./components/PickPiece.vue";
+  import StartGameButtons from "./components/StartGameButtons.vue";
 
-  const module = useGameModule()
-
-  const playerSetup = module.getPlayerSetupRef()
+  const {gameProgressStateRef} = useGameModule()
+  const gameProgressState = gameProgressStateRef();
 </script>
 
 <style scoped>

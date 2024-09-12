@@ -1,12 +1,12 @@
 <template>
   <div class="pick-piece">
-    <div class="cell pickable" @click="pick('O')">
+    <div class="cell pickable" @click="pickO">
       <OPiece />
     </div>
     <div class="cell">
       Or
     </div>
-    <div class="cell pickable" @click="pick('X')">
+    <div class="cell pickable" @click="pickX">
       <XPiece />
     </div>
   </div>
@@ -15,12 +15,11 @@
 <script lang="ts" setup>
   import OPiece from "./OPiece.vue";
   import XPiece from "./XPiece.vue";
-  import {GamePiece, useGameModule} from "../modules/gameModule.ts";
+  import {useGameModule} from "../modules/gameModule.ts";
 
-  const module = useGameModule();
-  const pick = (piece: GamePiece) => {
-    module.pickPiece(piece)
-  }
+  const {pickPiece} = useGameModule();
+  const pickX = () => pickPiece('X');
+  const pickO = () => pickPiece('O');
 
 </script>
 
