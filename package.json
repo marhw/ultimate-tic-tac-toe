@@ -1,7 +1,7 @@
 {
-  "name": "zadanie-rekrutacyjne",
+  "name": "tic-tac-toe",
   "version": "1.0.0",
-  "description": "",
+  "description": "Nicest tic tac toe ever made",
   "author": "",
   "license": "MIT",
   "devDependencies": {
