@@ -8,30 +8,30 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class BoardElementDocument
 {
     #[MongoDB\Field(type: "int")]
-    private string $x;
+    private int $x;
 
     #[MongoDB\Field(type: "int")]
-    private string $y;
+    private int $y;
 
     #[MongoDB\Field(type: "string")]
     private string $piece;
 
-    public function getX(): string
+    public function getX(): int
     {
         return $this->x;
     }
 
-    public function setX(string $x): void
+    public function setX(int $x): void
     {
         $this->x = $x;
     }
 
-    public function getY(): string
+    public function getY(): int
     {
         return $this->y;
     }
 
-    public function setY(string $y): void
+    public function setY(int $y): void
     {
         $this->y = $y;
     }

@@ -2,6 +2,8 @@
 
 namespace App\Modules\Games\Infrastructure\Doctrine\Mappers;
 
+use App\Modules\Games\Domain\Shared\BoardElement;
+use App\Modules\Games\Domain\Shared\Errors\InvalidPiece;
 use App\Modules\Games\Domain\TicTacToe\TicTacToeBoard;
 use App\Modules\Games\Domain\TicTacToe\TicTacToeGame;
 use App\Modules\Games\Domain\TicTacToe\TicTacToePiece;
@@ -10,6 +12,8 @@ use App\Modules\Games\Infrastructure\Doctrine\Documents\BoardDocument;
 use App\Modules\Games\Infrastructure\Doctrine\Documents\BoardElementDocument;
 use App\Modules\Games\Infrastructure\Doctrine\Documents\ScoreDocument;
 use App\Modules\Games\Infrastructure\Doctrine\Documents\TicTacToeGameDocument;
+use Doctrine\Common\Collections\ArrayCollection;
+use Error;
 use ReflectionClass;
 
 class TicTacToeGameMapper
@@ -38,10 +42,7 @@ class TicTacToeGameMapper
         return $document;
     }
 
-    /**
-     * @param TicTacToeBoard $board
-     */
-    private static function mapBoardToDocument(TicTacToeBoard $board): BoardDocument
+    public static function mapBoardToDocument(TicTacToeBoard $board): BoardDocument
     {
         $boardDocument = new BoardDocument();
         $boardDocument->setSizeX($board->size()->x());
@@ -71,7 +72,7 @@ class TicTacToeGameMapper
      * @param TicTacToeScore $score
      * @return array<ScoreDocument>
      */
-    private static function mapScoreToDocuments(TicTacToeScore $score): array
+    public static function mapScoreToDocuments(TicTacToeScore $score): array
     {
         $currentScore = $score->getCurrentScore();
 
@@ -89,12 +90,46 @@ class TicTacToeGameMapper
         return $documents;
     }
 
-    public static function mapDocumentToGameObject(TicTacToeGameDocument | null $doc): TicTacToeGame | null
+    public static function mapDocumentToBoard(BoardDocument $boardDocument): TicTacToeBoard
     {
-        if ($doc === null) {
-            return null;
+        $elements = [];
+
+        foreach ($boardDocument->getElements() as $element) {
+            $elements[] = new BoardElement(
+                $element->getX(),
+                $element->getY(),
+                self::stringToPiece($element->getPiece())
+            );
         }
 
-        return null;
+        return new TicTacToeBoard($elements);
+    }
+
+    public static function stringToPiece(string $string): TicTacToePiece
+    {
+        $result = TicTacToePiece::fromString($string);
+        if ($result instanceof InvalidPiece) {
+            //#TODO: better error
+            throw new Error("implementation error");
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param ArrayCollection<int, ScoreDocument> $scoreDocuments
+     */
+    public static function mapDocumentsToScore(ArrayCollection $scoreDocuments): TicTacToeScore
+    {
+        $score = new TicTacToeScore();
+
+        foreach ($scoreDocuments->toArray() as $scoreDocument) {
+            $score->addScoreForPlayer(
+                self::stringToPiece($scoreDocument->getPlayer()),
+                $scoreDocument->getScore()
+            );
+        }
+
+        return $score;
     }
 }

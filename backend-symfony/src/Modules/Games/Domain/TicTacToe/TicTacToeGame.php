@@ -9,14 +9,14 @@ use App\Modules\Games\Domain\Shared\Errors\{GameIsOver,
     PositionIsOutOfBoardBound,
     PositionOnBoardAlreadyTaken};
 
-final class TicTacToeGame implements Game
+class TicTacToeGame implements Game
 {
-    private TicTacToeBoard $board;
-    private TicTacToePiece $nextPlayer;
-    private ?TicTacToePiece $winner;
-    private TicTacToeScore $score;
-    private TicTacToeWinnerDecider $winnerDecider;
-    private TicTacToePlayerOrderCalculator $playerOrderCalculator;
+    protected TicTacToeBoard $board;
+    protected TicTacToePiece $nextPlayer;
+    protected ?TicTacToePiece $winner;
+    protected TicTacToeScore $score;
+    protected TicTacToeWinnerDecider $winnerDecider;
+    protected TicTacToePlayerOrderCalculator $playerOrderCalculator;
 
     public function __construct()
     {

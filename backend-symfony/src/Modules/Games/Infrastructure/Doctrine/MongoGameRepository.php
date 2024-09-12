@@ -7,6 +7,7 @@ use App\Modules\Games\Domain\GameRepository;
 use App\Modules\Games\Domain\TicTacToe\TicTacToeGame;
 use App\Modules\Games\Infrastructure\Doctrine\Documents\TicTacToeGameDocument;
 use App\Modules\Games\Infrastructure\Doctrine\Mappers\TicTacToeGameMapper;
+use App\Modules\Games\Infrastructure\Doctrine\Wrappers\TicTacToeGameWrapper;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 
@@ -24,7 +25,11 @@ class MongoGameRepository implements GameRepository
     {
         $document = $this->repository->findOneBy([]);
 
-        return TicTacToeGameMapper::mapDocumentToGameObject($document);
+        if ($document === null) {
+            return null;
+        }
+
+        return new TicTacToeGameWrapper($document);
     }
 
     public function findRawTicTacToeGame(): TicTacToeGameDocument | null
@@ -38,7 +43,10 @@ class MongoGameRepository implements GameRepository
             return;
         }
 
-        $document = TicTacToeGameMapper::mapGameObjectToDocument($game);
+        $document = $game instanceof TicTacToeGameWrapper
+            ? $game->applyChangesAndGetDoc()
+            : TicTacToeGameMapper::mapGameObjectToDocument($game);
+
         $this->documentManager->persist($document);
         $this->documentManager->flush();
     }

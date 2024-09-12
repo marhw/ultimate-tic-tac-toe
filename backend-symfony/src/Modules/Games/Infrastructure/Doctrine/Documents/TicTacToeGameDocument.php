@@ -66,6 +66,7 @@ class TicTacToeGameDocument
      */
     public function setScore(array $score): void
     {
+        $this->score->clear();
         foreach ($score as $scoreDocument) {
             $this->score[] = $scoreDocument;
         }
