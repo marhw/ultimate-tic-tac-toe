@@ -4,6 +4,11 @@ namespace App\Modules\Games\Domain\TicTacToe;
 
 final class TicTacToePlayerOrderCalculator
 {
+    public function selectFirstPlayer(): TicTacToePiece
+    {
+        return TicTacToeValidPieces::O->toPiece();
+    }
+
     public function selectPlayerForNextGame(TicTacToePiece | null $playerWhichLastTimeStarted): TicTacToePiece
     {
         $x = TicTacToeValidPieces::X->toPiece();
