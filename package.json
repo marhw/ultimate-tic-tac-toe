@@ -12,7 +12,7 @@
       "fix-lint-backend": "php ./backend-symfony/vendor/bin/phpcbf --standard=PSR12 ./backend-symfony/src"
   },
   "lint-staged": {
-    "./frontend-vue/src/**/*.{js,vue,ts}": [
+    "./frontend-vue/src/**/*.{vue,ts}": [
       "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js",
       "npx --prefix ./frontend-vue prettier --write --config ./frontend-vue/.prettierrc",
       "npx --prefix ./frontend-vue eslint --fix --config ./frontend-vue/eslint.config.js"

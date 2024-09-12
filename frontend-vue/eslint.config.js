@@ -13,8 +13,6 @@ export default [
             },
         },
     },
-
-    // js
     js.configs.recommended,
     {
         rules: {
@@ -22,8 +20,6 @@ export default [
             'no-undef': 'off',
         },
     },
-
-    // ts
     ...ts.configs.recommended,
     {
         rules: {
@@ -31,8 +27,6 @@ export default [
             '@typescript-eslint/no-explicit-any': 'warn',
         },
     },
-
-    // vue
     ...vue.configs['flat/recommended'],
     {
         files: ['*.vue', '**/*.vue'],
@@ -49,8 +43,8 @@ export default [
             'vue/v-on-event-hyphenation': ['error', 'never'],
             'vue/no-v-html': 'off',
 
-            'vue/block-lang': ['error', { script: { lang: 'ts' } }],
-            'vue/block-order': ['error', { order: ['script[setup]', 'template', 'style[scoped]'] }],
+            'vue/block-lang': ['error', {script: {lang: 'ts'}}],
+            'vue/block-order': ['error', {order: ['script[setup]', 'template', 'style[scoped]']}],
             'vue/component-api-style': ['error', ['script-setup']],
             'vue/component-name-in-template-casing': 'error',
             'vue/custom-event-name-casing': 'error',
@@ -84,8 +78,6 @@ export default [
             'vue/valid-define-options': 'error',
         },
     },
-
-    // prettier
     prettier,
     {
         rules: {

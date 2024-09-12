@@ -1,0 +1,11 @@
+nelmio_cors:
+  defaults:
+    allow_origin: [ "*" ]  # Your frontend URL (e.g., Vue)
+    allow_credentials: true
+    allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With']
+    expose_headers: ['Link']
+    max_age: 3600
+  paths:
+    '^/':
+      allow_origin: ['*']

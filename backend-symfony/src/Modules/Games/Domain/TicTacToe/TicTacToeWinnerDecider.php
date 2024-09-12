@@ -33,7 +33,7 @@ final class TicTacToeWinnerDecider
             return null;
         }
 
-        $firstBoardElement = $set[0];
+        $firstBoardElement = array_values($set)[0];
 
         foreach ($set as $boardElement) {
             if (!$firstBoardElement->piece()->equals($boardElement->piece())) {

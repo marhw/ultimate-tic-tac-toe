@@ -1,17 +1,17 @@
-<template>
-  <Button @click="startGame">Start Game</Button>
-  <Button @click="reset">Reset</Button>
-</template>
+<script lang="ts" setup>
+import { useGameModule } from '../modules/gameModule.ts'
 
-<script setup lang="ts">
-  import {useGameModule} from "../modules/gameModule.ts";
+const gameModule = useGameModule()
 
-  const gameModule = useGameModule()
-
-  const reset = () => gameModule.reset();
-  const startGame = () => gameModule.startGame();
+const reset = () => gameModule.resetBoard()
+const startGame = () => gameModule.startGame()
+const resetGame = () => gameModule.resetGame()
 </script>
 
-<style scoped>
+<template>
+    <button type="button" @click="startGame">Start Game</button>
+    <button type="button" @click="reset">Reset Board</button>
+    <button type="button" @click="resetGame">Reset Game</button>
+</template>
 
-</style>
+<style scoped></style>

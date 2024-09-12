@@ -21,8 +21,6 @@ build/
 dist/
 out/
 
-.docker/
-
 # Ignore git-related files
 .git
 .gitignore

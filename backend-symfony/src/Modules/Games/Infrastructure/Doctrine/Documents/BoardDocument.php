@@ -55,8 +55,9 @@ class BoardDocument
      */
     public function setElements(array $elements): void
     {
+        $this->elements->clear();
         foreach ($elements as $element) {
-            $this->elements->add($element);
+            $this->elements[] = $element;
         }
     }
 }

@@ -8,10 +8,18 @@ namespace App\Modules\Games\Domain\Shared;
 abstract class Board
 {
     /**
+     * @var array<BoardElement<TPiece>> $elements
+     */
+    private array $elements = [];
+
+    /**
      * @param array<BoardElement<TPiece>> $elements
      */
-    public function __construct(protected readonly BoardSize $size, private array $elements = [])
+    public function __construct(protected readonly BoardSize $size, array $elements = [])
     {
+        foreach ($elements as $element) {
+            $this->elements[$this->coordsToBoardIndex($element->x(), $element->y())] = $element;
+        }
     }
 
     /**
@@ -73,7 +81,7 @@ abstract class Board
 
     protected function positionToBoardIndex(BoardPosition $position): int
     {
-        return $position->x() * $position->y() + $position->x();
+        return $this->size->y() * $position->y() + $position->x();
     }
 
     public function isPositionOccupied(BoardPosition $position): bool
@@ -107,7 +115,7 @@ abstract class Board
 
     protected function coordsToBoardIndex(int $x, int $y): int
     {
-        return $x * $y + $x;
+        return $this->size->y() * $y + $x;
     }
 
     /**

@@ -8,10 +8,10 @@ final class MakeMoveDTO
 {
     public function __construct(
         #[Assert\NotBlank,
-    Assert\GreaterThan(0)]
+    Assert\GreaterThanOrEqual(0)]
         public int $x,
         #[Assert\NotBlank,
-    Assert\GreaterThan(0)]
+    Assert\GreaterThanOrEqual(0)]
         public int $y,
         #[Assert\NotBlank]
         public string $piece,

@@ -13,10 +13,12 @@ use App\Modules\Games\Domain\Shared\Errors\PositionIsOutOfBoardBound;
 use App\Modules\Games\Domain\Shared\Errors\PositionOnBoardAlreadyTaken;
 use App\Modules\Games\Domain\TicTacToe\TicTacToeGame;
 use App\Modules\Games\Domain\TicTacToe\TicTacToePiece;
+use Exception;
+use Psr\Log\LoggerInterface;
 
 class TicTacToeGameService
 {
-    public function __construct(private readonly GameRepository $gameRepository)
+    public function __construct(private readonly GameRepository $gameRepository, private LoggerInterface $logger)
     {
     }
 
@@ -34,7 +36,7 @@ class TicTacToeGameService
         int $x,
         int $y,
         string $piece
-    ): GameNotStartedYet | PiecePlacedOutOfTurn | PositionInBoardAlreadyTaken | null {
+    ): PiecePlacedOutOfTurn | PositionInBoardAlreadyTaken | null {
         $game = $this->gameRepository->findGame();
 
         if (!($game instanceof TicTacToeGame)) {
@@ -49,11 +51,19 @@ class TicTacToeGameService
 
         $result = $game->placePiece($ticTacToePiece, $x, $y);
 
-        return match (true) {
+        $errorResult = match (true) {
             $result instanceof PlayerMadeMoveWithoutTurn => new PiecePlacedOutOfTurn(),
             $result instanceof PositionOnBoardAlreadyTaken => new PositionInBoardAlreadyTaken(),
-            $result instanceof GameIsOver, $result instanceof PositionIsOutOfBoardBound, $result === null => null,
+            $result instanceof GameIsOver, $result === null => null,
+            $result instanceof PositionIsOutOfBoardBound => null,
         };
+
+        if ($errorResult === null) {
+            $this->gameRepository->save($game);
+            return null;
+        }
+
+        return $errorResult;
     }
 
     public function reset(): void
@@ -65,6 +75,7 @@ class TicTacToeGameService
         }
 
         $game->resetGame();
+        $this->gameRepository->save($game);
     }
 
     public function removeGame(): void

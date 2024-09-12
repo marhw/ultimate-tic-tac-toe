@@ -14,6 +14,7 @@ use App\Modules\Games\Infrastructure\Doctrine\Documents\ScoreDocument;
 use App\Modules\Games\Infrastructure\Doctrine\Documents\TicTacToeGameDocument;
 use Doctrine\Common\Collections\ArrayCollection;
 use Error;
+use Exception;
 use ReflectionClass;
 
 class TicTacToeGameMapper

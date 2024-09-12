@@ -13,7 +13,8 @@ class TicTacToeGameWrapper extends TicTacToeGame
         parent::__construct();
 
         $this->nextPlayer = TicTacToeGameMapper::stringToPiece($doc->getNextPlayer());
-        $this->winner = $doc->getWinner() === null ? TicTacToeGameMapper::stringToPiece($doc->getWinner()) : null;
+        $winner = $doc->getWinner();
+        $this->winner = $winner !== null ? TicTacToeGameMapper::stringToPiece($winner) : null;
         $this->board = TicTacToeGameMapper::mapDocumentToBoard($doc->getBoard());
         $this->score = TicTacToeGameMapper::mapDocumentsToScore($doc->getScore());
     }

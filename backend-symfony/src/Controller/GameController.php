@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Controller\DTO\MakeMoveDTO;
 use App\Modules\Games\Application\Response\GameNotStartedYet;
+use App\Modules\Games\Application\Response\PiecePlacedOutOfTurn;
+use App\Modules\Games\Application\Response\PositionInBoardAlreadyTaken;
 use App\Modules\Games\GamesModule;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +20,7 @@ class GameController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'start-game', methods: ['GET'], format: 'json')]
+    #[Route(path: '/', name: 'start-game', methods: [Request::METHOD_GET], format: 'json')]
     public function startGame(): JsonResponse
     {
         $this->gamesModule->startGame();
@@ -25,21 +28,32 @@ class GameController extends AbstractController
         return $this->getCurrentGameState();
     }
 
-    #[Route('/move', name: 'make-move', methods: ['POST'], format: 'json')]
+    #[Route(path: '/move', name: 'make-move', methods: [Request::METHOD_POST], format: 'json')]
     public function makeMove(#[MapRequestPayload] MakeMoveDTO $makeMoveDTO): JsonResponse
     {
-        $this->gamesModule->makeMove($makeMoveDTO->x, $makeMoveDTO->y, $makeMoveDTO->piece);
-        return $this->getCurrentGameState();
+        $result = $this->gamesModule->makeMove($makeMoveDTO->x, $makeMoveDTO->y, $makeMoveDTO->piece);
+
+        return match (true) {
+            $result instanceof PositionInBoardAlreadyTaken => $this->json(
+                ['message' => 'Position in board already taken'],
+                Response::HTTP_CONFLICT
+            ),
+            $result instanceof PiecePlacedOutOfTurn => $this->json(
+                ['message' => 'Piece placed out of turn'],
+                Response::HTTP_NOT_ACCEPTABLE
+            ),
+            $result === null => $this->getCurrentGameState()
+        };
     }
 
-    #[Route('/restart', name: 'reset', methods: ['POST'], format: 'json')]
+    #[Route(path: '/restart', name: 'reset', methods: [Request::METHOD_POST], format: 'json')]
     public function reset(): JsonResponse
     {
         $this->gamesModule->reset();
         return $this->getCurrentGameState();
     }
 
-    #[Route('/', name: 'remove-game', methods: ['DELETE'], format: 'json')]
+    #[Route(path: '/', name: 'remove-game', methods: [Request::METHOD_DELETE], format: 'json')]
     public function removeGame(): JsonResponse
     {
         $this->gamesModule->removeGame();

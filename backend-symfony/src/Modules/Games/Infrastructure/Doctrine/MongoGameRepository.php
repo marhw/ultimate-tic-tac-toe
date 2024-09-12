@@ -9,7 +9,9 @@ use App\Modules\Games\Infrastructure\Doctrine\Documents\TicTacToeGameDocument;
 use App\Modules\Games\Infrastructure\Doctrine\Mappers\TicTacToeGameMapper;
 use App\Modules\Games\Infrastructure\Doctrine\Wrappers\TicTacToeGameWrapper;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
+use Exception;
 
 class MongoGameRepository implements GameRepository
 {
@@ -37,20 +39,32 @@ class MongoGameRepository implements GameRepository
         return $this->repository->findOneBy([]);
     }
 
+    /**
+     * @throws MongoDBException
+     * @throws Exception
+     */
     public function save(Game $game): void
     {
-        if (!($game instanceof TicTacToeGame)) {
+        if ($game instanceof TicTacToeGameWrapper) {
+            $document = $game->applyChangesAndGetDoc();
+            $this->documentManager->persist($document);
+            $this->documentManager->flush();
             return;
         }
 
-        $document = $game instanceof TicTacToeGameWrapper
-            ? $game->applyChangesAndGetDoc()
-            : TicTacToeGameMapper::mapGameObjectToDocument($game);
+        if ($game instanceof TicTacToeGame) {
+            $document = TicTacToeGameMapper::mapGameObjectToDocument($game);
+            $this->documentManager->persist($document);
+            $this->documentManager->flush();
+            return;
+        }
 
-        $this->documentManager->persist($document);
-        $this->documentManager->flush();
+        throw new Exception("implementation error");
     }
 
+    /**
+     * @throws MongoDBException
+     */
     public function remove(Game $game): void
     {
         $document = $this->repository->findOneBy([]);

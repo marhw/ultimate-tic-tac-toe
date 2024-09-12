@@ -1,27 +1,34 @@
-import {useApi} from "./api.ts";
+import { useApi } from './api.ts'
 
-export type Piece = "x" | "o";
-export type BoardPiece = Piece | "";
+export type Piece = 'x' | 'o'
+export type BoardPiece = Piece | ''
 
 export type GameState = {
-  board: BoardPiece[][],
-  score: Record<Piece, number>,
-  currentTurn: Piece,
-  victory: BoardPiece,
+    board: BoardPiece[][]
+    score: Record<Piece, number>
+    currentTurn: Piece
+    victory: BoardPiece
 }
 
 export type BoardPosition = {
-  x: number,
-  y: number
+    x: number
+    y: number
+}
+
+export type MakeMovePayload = {
+    x: number
+    y: number
+    piece: Piece
 }
 
 export function useGameAPI() {
-  const api = useApi();
+    const api = useApi()
 
-  return {
-    getGame: () => api.getReq<GameState>(`/`),
-    makeMove: ({piece, position}: {piece: Piece, position: BoardPosition}) => api.postReq<GameState, BoardPosition>(`/${piece}`, {...position}),
-    resetGame: () => api.postReq<GameState, {}>(`/restart`, {}),
-    deleteGame: () => api.deleteReq<Pick<GameState, 'currentTurn'>>(`/`),
-  }
+    return {
+        getGame: () => api.getReq<GameState>(``),
+        makeMove: (payload: MakeMovePayload) =>
+            api.postReq<GameState, MakeMovePayload>(`/move`, payload),
+        resetGame: () => api.postReq<GameState, object>(`/restart`, {}),
+        deleteGame: () => api.deleteReq<Pick<GameState, 'currentTurn'>>(`/`),
+    }
 }
