@@ -23,6 +23,8 @@ services:
       - "8000:80"
     volumes:
       - ./backend-symfony:/app
+      - vendor:/app/vendor
+      - var:/app/var
     environment:
       - APP_ENV=dev
     working_dir: /app
@@ -49,6 +51,18 @@ volumes:
       type: none
       o: bind
       device: ./frontend-vue/node_modules
+  vendor:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./backend-symfony/vendor
+  var:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./backend-symfony/var
 
 networks:
   docker-net:
