@@ -13,10 +13,11 @@ Game is fully dockerized and standalone, so you can run it on any machine with d
 1. Clone the repository
 2. Go to backend-symfony folder and copy `.env.dist` file to `.env`
 3. Go to frontend-vue folder and copy the `.env.local.dist` file to `.env.local`
-4. Optionally call `npm install` in frontend folder (docker also installing packages, but I made `node_modules` volume so you can install it locally and then docker will check only difference between cache)
-5. Go back to main folder and run in console `docker-compose up`
-6. Backend is under [localhost:8000](localhost:8000)
-7. Frontend is under [localhost:3000](localhost:3000)
+4. Go back to main folder and run in console `docker-compose up`
+5. Backend is under [localhost:8000](localhost:8000)
+6. Frontend is under [localhost:3000](localhost:3000)
+
+note: both `node_modules` and `vendor` folders are mounted to the host machine after `docker-compose`
 
 ## Migration
 No migration Required
